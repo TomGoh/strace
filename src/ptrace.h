@@ -30,7 +30,26 @@
 #  define ptrace_peeksiginfo_args XXX_ptrace_peeksiginfo_args
 # endif
 
+/* Workaround for musl + linux headers conflict on aarch64 */
+# if defined(__aarch64__)
+#  define sigcontext __kernel_sigcontext
+#  define _aarch64_ctx __kernel_aarch64_ctx
+#  define fpsimd_context __kernel_fpsimd_context
+#  define esr_context __kernel_esr_context
+#  define extra_context __kernel_extra_context
+#  define sve_context __kernel_sve_context
+# endif
+
 # include <linux/ptrace.h>
+
+# if defined(__aarch64__)
+#  undef sigcontext
+#  undef _aarch64_ctx
+#  undef fpsimd_context
+#  undef esr_context
+#  undef extra_context
+#  undef sve_context
+# endif
 
 # ifdef HAVE_STRUCT_IA64_FPREG
 #  undef ia64_fpreg
